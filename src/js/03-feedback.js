@@ -16,7 +16,8 @@ refs.message.addEventListener('input', throttle(onMessegeInput, 500));
 function onFormSubmit(e) {
   e.preventDefault();
   e.currentTarget.reset();
-  localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(STORAGE_KEY);
+    console.log(formData);
 }
 
 function onEmailInput(e) {
