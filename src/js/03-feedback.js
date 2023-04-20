@@ -33,6 +33,9 @@ refs.message.addEventListener('input', throttle(onMessegeInput, 500));
 
 function onFormSubmit(e) {
   e.preventDefault();
+  if (refs.email.value === '' || refs.message.value === '') {
+    return alert('Please fill in all the fields!');
+  }
   e.currentTarget.reset();
   localStorage.removeItem(STORAGE_KEY);
   console.log(formData);
@@ -51,7 +54,11 @@ function onMessegeInput(e) {
 function populateTextarea() {
   const savedObj = load(STORAGE_KEY);
   if (savedObj) {
-    refs.email.value = savedObj.email;
-    refs.message.value = savedObj.message;
+    if (savedObj.email) {
+      refs.email.value = savedObj.email;
+    }
+    if (savedObj.message) {
+      refs.message.value = savedObj.message;
+    }
   }
 }
