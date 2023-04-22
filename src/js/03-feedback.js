@@ -1,12 +1,13 @@
 import throttle from 'lodash.throttle';
 
 const STORAGE_KEY = 'feedback-form-state';
+const formData = { email: '', message: '' };
 const refs = {
   form: document.querySelector('.feedback-form'),
   email: document.querySelector('.feedback-form input'),
   message: document.querySelector('.feedback-form textarea'),
 };
-const formData = { email: '', message: '' };
+
 const save = (key, value) => {
   try {
     const serializedState = JSON.stringify(value);
@@ -25,11 +26,8 @@ const load = key => {
   }
 };
 
-populateTextarea();
-
 refs.form.addEventListener('submit', onFormSubmit);
-refs.email.addEventListener('input', throttle(onEmailInput, 500));
-refs.message.addEventListener('input', throttle(onMessegeInput, 500));
+refs.form.addEventListener('input', throttle(onInputSave, 500));
 
 function onFormSubmit(e) {
   e.preventDefault();
@@ -41,24 +39,32 @@ function onFormSubmit(e) {
   console.log(formData);
 }
 
-function onEmailInput(e) {
-  formData.email = e.target.value;
-  save(STORAGE_KEY, formData);
-}
+function onInputSave(e) {
+  const target = e.target;
+  const formELName = target.name;
+  const formELValue = target.value;
 
-function onMessegeInput(e) {
-  formData.message = e.target.value;
+  formData[formELName] = formELValue;
   save(STORAGE_KEY, formData);
 }
 
 function populateTextarea() {
   const savedObj = load(STORAGE_KEY);
-  if (savedObj) {
-    if (savedObj.email) {
-      refs.email.value = savedObj.email;
-    }
-    if (savedObj.message) {
-      refs.message.value = savedObj.message;
-    }
+
+  if (!savedObj) {
+    return;
   }
+
+  const formElements = refs.form.elements;
+
+  for (const key in savedObj)
+    if (savedObj.hasOwnProperty(key)) {
+      formElements[key].value = savedObj[key];
+
+      if (savedObj[key]) {
+        formData[key] = savedObj[key];
+      }
+    }
 }
+
+populateTextarea();
